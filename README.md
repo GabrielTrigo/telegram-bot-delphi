@@ -1,7 +1,7 @@
 
 # telegram-bot-delphi
 
-⚡ ### Features
+### Features
 
 - Send text message
 - Send file
@@ -9,7 +9,7 @@
 - Send message with buttons
 - Get chat updates
 
-📱 ### How to create a bot in Telegram? 
+### How to create a bot in Telegram? 
 1. Start a new chat with [@BotFather](https://t.me/botfather) in Telegram
 2. Send [/newbot]() 
 3. Choose a name for your bot
@@ -17,4 +17,4 @@
 5. Get and save the "token" to use in examples
 
 
-[Original Documentation](https://core.telegram.org/bots/api)
+[Telegram API Documentation](https://core.telegram.org/bots/api)
