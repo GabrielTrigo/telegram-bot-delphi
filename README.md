@@ -1,5 +1,4 @@
 #telegram-bot-delphi
-###A simple example of integration with a telegram bot API.
 
 ### Features
 
