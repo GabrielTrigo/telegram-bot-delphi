@@ -47,7 +47,7 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  EdtTokenBot.Text := 'YOUR_API_TOKE_HERE';
+  EdtTokenBot.Text := 'YOUR_API_TOKEN_HERE';
 
   // use the button "getUpdates" for get chats IDs(only messages sent to your bot)
   EdtUserId.Text := 'USERID_FOR_SEND_MESSAGES';
