@@ -147,7 +147,7 @@ end;
 
 procedure TForm1.BtnSendLocationClick(Sender: TObject);
 begin
-  FTelegram.SendLocation('-23.3765579', '-51.9195364,16z');
+  FTelegram.SendLocation('51.519138', '-0.129028');
 end;
 
 procedure TForm1.OnAPIError(AExcept: Exception);
