@@ -110,7 +110,6 @@ begin
     for pChat in pChatList do
       ShowMessage(pChat.Message.Text + ' - ' + pChat.Message.From.Id.ToString);
   finally
-    FreeAndNil(pChat);
     FreeAndNil(pChatList);
   end;
 end;
