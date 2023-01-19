@@ -94,7 +94,7 @@ end;
 
 function TTelegramAPI.GetUpdates(var AValue: TChatMessageDTOList): iTelegramAPI;
 var
-  pArrJSON: TJSONArray;
+  lArrJSON: TJSONArray;
   I: Byte;
 begin
   Result := Self;
@@ -109,13 +109,15 @@ begin
   try
     FResult := _GET(GetURL('/getUpdates'));
 
-    pArrJSON := ((TJSONObject.ParseJSONValue(FResult) as TJSONObject)
+    lArrJSON := ((TJSONObject.ParseJSONValue(FResult) as TJSONObject)
       .GetValue('result') as TJSONArray);
 
-    if pArrJSON.Count <= 0 then Exit;
+    if lArrJSON.Count <= 0 then Exit;
 
-    for I := 0 to Pred(pArrJSON.Count) do
-      AValue.Add(TJSON.JsonToObject<TChatMessageDTO>(pArrJSON.Items[I].ToJSON));
+    for I := 0 to Pred(lArrJSON.Count) do
+      AValue.Add(TJSON.JsonToObject<TChatMessageDTO>(lArrJSON.Items[I].ToJSON));
+
+    lArrJSON.Destroy;
   except
     on E: Exception do
     begin
@@ -183,31 +185,32 @@ end;
 function TTelegramAPI.SendMsgWithButtons(AMsg: String;
   AButtons: TTelegramButtons): iTelegramAPI;
 var
-  pData: TStrings;
-  pJsonArr: TJSONArray;
+  lData: TStrings;
+  lJsonArr: TJSONArray;
+  lButton: TTelegramButton;
 begin
   Result := Self;
 
   if AButtons.Count <= 0 then
     Exit;
 
-  pJsonArr := TJSONArray.Create;
+  lJsonArr := TJSONArray.Create;
 
-  for var Enum in AButtons do
+  for lButton in AButtons do
   begin
-    pJsonArr.AddElement(TJSONObject.Create.AddPair('text', Enum.Key)
-      .AddPair('url', Enum.Value));
+    lJsonArr.AddElement(TJSONObject.Create.AddPair('text', lButton.Key)
+      .AddPair('url', lButton.Value));
   end;
 
   FHTTPClient.ContentType := 'application/json';
 
-  pData := TStringList.Create;
-  pData.AddPair('chat_id', FUserID);
-  pData.AddPair('text', AMsg);
-  pData.AddPair('reply_markup', '{"inline_keyboard":[' +
-    pJsonArr.ToJSON + ']}');
+  lData := TStringList.Create;
+  lData.AddPair('chat_id', FUserID);
+  lData.AddPair('text', AMsg);
+  lData.AddPair('reply_markup', '{"inline_keyboard":[' +
+    lJsonArr.ToJSON + ']}');
 
-  FResult := _POST(GetURL('/sendMessage'), pData);
+  FResult := _POST(GetURL('/sendMessage'), lData);
 end;
 
 function TTelegramAPI.SetBotToken(AToken: String): iTelegramAPI;
