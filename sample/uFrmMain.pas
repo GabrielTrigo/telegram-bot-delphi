@@ -4,19 +4,19 @@ interface
 
 uses
   System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls,
-  Vcl.Forms, Vcl.Dialogs, uTelegramAPI, uTelegramAPI.Interfaces, uConsts,
-  Vcl.StdCtrls, uClassMessageDTO, Vcl.ExtCtrls, Vcl.Buttons, System.IOUtils;
+  Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, System.IOUtils,
+  uTelegramAPI, uTelegramAPI.Interfaces, uConsts, uClassMessageDTO;
 
 type
   TForm1 = class(TForm)
     BtnSendFile: TButton;
     EdtTokenBot: TEdit;
-    Memo1: TMemo;
+    MemLog: TMemo;
     BtnSendMsg: TButton;
     BtnSendWithButtons: TButton;
-    Button1: TButton;
+    BtnGetUpdates: TButton;
     BtnSendLocation: TButton;
-    Button2: TButton;
+    BtnStartMonitor: TButton;
     SpeedButton1: TSpeedButton;
     EdtUserId: TEdit;
     Label1: TLabel;
@@ -25,9 +25,9 @@ type
     procedure BtnSendFileClick(Sender: TObject);
     procedure BtnSendMsgClick(Sender: TObject);
     procedure BtnSendWithButtonsClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure BtnGetUpdatesClick(Sender: TObject);
     procedure BtnSendLocationClick(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+    procedure BtnStartMonitorClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
@@ -58,40 +58,45 @@ begin
     .SetUserID(EdtUserId.Text)
     .SetBotToken(EdtTokenBot.Text);
 
-  Memo1.Clear;
+  MemLog.Clear;
 end;
 
 procedure TForm1.BtnSendFileClick(Sender: TObject);
 begin
   FTelegram.SendFile('C:\File.zip');
 
-  Memo1.Text := FTelegram.GetResult();
+  MemLog.Text := FTelegram.GetResult();
 end;
 
 procedure TForm1.BtnSendMsgClick(Sender: TObject);
 begin
   FTelegram.SendMsg('Hey there!');
 
-  Memo1.Text := FTelegram.GetResult();
+  MemLog.Text := FTelegram.GetResult();
 end;
 
 procedure TForm1.BtnSendWithButtonsClick(Sender: TObject);
 var
-  pButtons: TTelegramButtons;
+  lButtons: TTelegramButtons;
 begin
-  pButtons := TTelegramButtons.Create;
-  with pButtons do
-  begin
-    Add('Lamp 1 Off', 'https://domain.com/lamp1/off');
-    Add('Lamp 1 On', 'https://domain.com/lamp1/on');
-    Add('Lamp 2 Off', 'https://domain.com/lamp2/off');
-    Add('Lamp 2 On', 'https://domain.com/lamp2/on');
-  end;
+  lButtons := TTelegramButtons.Create;
 
-  FTelegram.SendMsgWithButtons('Hi!', pButtons);
+  try
+    with lButtons do
+    begin
+      Add('Lamp 1 Off', 'https://domain.com/lamp1/off');
+      Add('Lamp 1 On', 'https://domain.com/lamp1/on');
+      Add('Lamp 2 Off', 'https://domain.com/lamp2/off');
+      Add('Lamp 2 On', 'https://domain.com/lamp2/on');
+    end;
+
+    FTelegram.SendMsgWithButtons('Hi!', lButtons);
+  finally
+    FreeAndNil(lButtons);
+  end;
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.BtnGetUpdatesClick(Sender: TObject);
 var
   pChatList: TChatMessageDTOList;
   pChat: TChatMessageDTO;
@@ -99,50 +104,54 @@ begin
   pChatList := TChatMessageDTOList.Create;
   pChat := TChatMessageDTO.Create;
 
-  FTelegram.GetUpdates(pChatList);
+  try
+    FTelegram.GetUpdates(pChatList);
 
-  for pChat in pChatList do
-    ShowMessage(pChat.Message.Text + ' - ' + pChat.Message.From.Id.ToString);
+    for pChat in pChatList do
+      ShowMessage(pChat.Message.Text + ' - ' + pChat.Message.From.Id.ToString);
+  finally
+    FreeAndNil(pChat);
+    FreeAndNil(pChatList);
+  end;
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
+procedure TForm1.BtnStartMonitorClick(Sender: TObject);
 begin
-  if not Assigned(FAsyncHttp) then
-  begin
-    FAsyncHttp := TThread.CreateAnonymousThread(
-      procedure
-      var
-        pChatList: TChatMessageDTOList;
+  if Assigned(FAsyncHttp) then Exit;
+
+  FAsyncHttp := TThread.CreateAnonymousThread(
+    procedure
+    var
+      lChatList: TChatMessageDTOList;
+    begin
+      lChatList := TChatMessageDTOList.Create;
+
+      while True do
       begin
-        pChatList := TChatMessageDTOList.Create;
+        lChatList.Clear;
 
-        while True do
-        begin
-          pChatList.Clear;
+        FTelegram.GetUpdates(lChatList);
 
-          FTelegram.GetUpdates(pChatList);
+        FAsyncHttp.Synchronize(FAsyncHttp,
+          procedure
+          var
+            lChat: TChatMessageDTO;
+          begin
+            MemLog.Lines.Clear;
+            MemLog.Lines.Add('-' + TimeToStr(Now()));
 
-          FAsyncHttp.Synchronize(FAsyncHttp,
-            procedure
-            var
-              pChat: TChatMessageDTO;
-            begin
-              Memo1.Lines.Clear;
-              Memo1.Lines.Add('-' + TimeToStr(Now()));
+            for lChat in lChatList do
+              MemLog.Lines.Add(lChat.Message.Text);
 
-              for pChat in pChatList do
-                Memo1.Lines.Add(pChat.Message.Text);
+            MemLog.Lines.Add('-');
+          end);
 
-              Memo1.Lines.Add('-');
-            end);
+        FAsyncHttp.Sleep(5000);
+      end;
 
-          FAsyncHttp.Sleep(5000);
-        end;
+    end);
 
-      end);
-
-    FAsyncHttp.Start();
-  end;
+  FAsyncHttp.Start();
 end;
 
 procedure TForm1.BtnSendLocationClick(Sender: TObject);

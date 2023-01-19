@@ -55,7 +55,7 @@ object Form1: TForm1
     Color = clSilver
     TabOrder = 1
   end
-  object Memo1: TMemo
+  object MemLog: TMemo
     Left = 0
     Top = 158
     Width = 411
@@ -68,12 +68,12 @@ object Form1: TForm1
     Font.Height = -13
     Font.Name = 'Tahoma'
     Font.Style = []
-    Lines.Strings = (
-      'Memo1')
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssVertical
     TabOrder = 2
+    ExplicitLeft = 5
+    ExplicitTop = 153
   end
   object BtnSendMsg: TButton
     Left = 5
@@ -93,14 +93,14 @@ object Form1: TForm1
     TabOrder = 4
     OnClick = BtnSendWithButtonsClick
   end
-  object Button1: TButton
+  object BtnGetUpdates: TButton
     Left = 207
     Top = 91
     Width = 95
     Height = 25
     Caption = 'GetUpdates'
     TabOrder = 5
-    OnClick = Button1Click
+    OnClick = BtnGetUpdatesClick
   end
   object BtnSendLocation: TButton
     Left = 308
@@ -111,14 +111,14 @@ object Form1: TForm1
     TabOrder = 6
     OnClick = BtnSendLocationClick
   end
-  object Button2: TButton
+  object BtnStartMonitor: TButton
     Left = 207
     Top = 122
     Width = 196
     Height = 25
     Caption = 'Start monitor'
     TabOrder = 7
-    OnClick = Button2Click
+    OnClick = BtnStartMonitorClick
   end
   object EdtUserId: TEdit
     Left = 5

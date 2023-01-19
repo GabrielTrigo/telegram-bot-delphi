@@ -3,10 +3,10 @@ program apiExample;
 uses
   Vcl.Forms,
   uFrmMain in 'uFrmMain.pas' {Form1},
-  uTelegramAPI.Interfaces in 'Common\uTelegramAPI.Interfaces.pas',
-  uTelegramAPI in 'Common\uTelegramAPI.pas',
-  uConsts in 'Common\uConsts.pas',
-  uClassMessageDTO in 'Common\uClassMessageDTO.pas';
+  uClassMessageDTO in '..\src\uClassMessageDTO.pas',
+  uConsts in '..\src\uConsts.pas',
+  uTelegramAPI.Interfaces in '..\src\uTelegramAPI.Interfaces.pas',
+  uTelegramAPI in '..\src\uTelegramAPI.pas';
 
 {$R *.res}
 
