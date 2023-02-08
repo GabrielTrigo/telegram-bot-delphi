@@ -3,11 +3,13 @@
 
 ### Features
 
-- Send text message
-- Send file
-- Send location
-- Send message with buttons
-- Get chat updates
+✅ Send text message
+✅ Send file
+✅ Send location
+✅ Send message with buttons
+✅ Get chat updates
+
+
 
 ### How to create a bot in Telegram? 
 1. Start a new chat with [@BotFather](https://t.me/botfather) in Telegram
