@@ -3,11 +3,11 @@
 
 ### Features
 
-✅ Send text message
-✅ Send file
-✅ Send location
-✅ Send message with buttons
-✅ Get chat updates
+- ✅ Send text message
+- ✅ Send file
+- ✅ Send location
+- ✅ Send message with buttons
+- ✅ Get chat updates
 
 
 
